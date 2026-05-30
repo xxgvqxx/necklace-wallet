@@ -9,7 +9,10 @@
   "exports": {
     ".": "./src/index.ts"
   },
-  "files": ["src", "fixtures"],
+  "files": [
+    "src",
+    "fixtures"
+  ],
   "scripts": {
     "typecheck": "tsc --noEmit",
     "lint": "eslint \"src/**/*.ts\"",
@@ -18,16 +21,16 @@
   },
   "dependencies": {
     "@necklace/shared": "workspace:*",
-    "@noble/curves": "^2.0.0",
-    "@noble/hashes": "^2.0.0",
-    "@scure/base": "^2.0.0",
-    "@scure/bip32": "^2.0.0",
-    "@scure/bip39": "^2.0.0",
-    "@scure/btc-signer": "^2.0.0"
+    "@noble/curves": "2.2.0",
+    "@noble/hashes": "2.2.0",
+    "@scure/base": "2.2.0",
+    "@scure/bip32": "2.2.0",
+    "@scure/bip39": "2.2.0",
+    "@scure/btc-signer": "2.2.0"
   },
   "devDependencies": {
     "@necklace/eslint-config": "workspace:*",
-    "typescript": "^6.0.0",
-    "vitest": "^4.0.0"
+    "typescript": "6.0.3",
+    "vitest": "4.1.7"
   }
 }

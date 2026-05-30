@@ -8,9 +8,9 @@
     ".": "./index.js"
   },
   "dependencies": {
-    "@eslint/js": "^10.0.0",
-    "typescript-eslint": "^8.60.0",
-    "globals": "^17.0.0"
+    "@eslint/js": "10.0.1",
+    "typescript-eslint": "8.60.0",
+    "globals": "17.6.0"
   },
   "peerDependencies": {
     "eslint": "^9.0.0 || ^10.0.0"
