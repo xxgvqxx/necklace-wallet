@@ -50,7 +50,7 @@ that ever sees your keys, balances, or addresses.
   (`packages/wallet-core`).
 - **Minimal permissions.** `storage` plus exactly two network hosts:
   `blockbook.pearlresearch.ai` (chain) and `safetrade.com` (price).
-- **Transparent fee.** The wallet adds a flat **1 PRL** fee as a *separate,
+- **Transparent fee.** The wallet adds a flat **0.1 PRL** fee as a *separate,
   visible output* (shown on the confirm screen) to a fixed, in-code address —
   never hidden, never server-controlled. See [docs/fee-policy.md](docs/fee-policy.md).
 

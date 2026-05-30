@@ -24,7 +24,7 @@ These are never blended into a single displayed number. The user always sees: am
 
 Rules (all non-negotiable):
 
-- **Flat, not percentage.** The fee is a fixed PRL amount per send, independent of the amount being transferred. (Exact amount: **1 PRL** — see §5.)
+- **Flat, not percentage.** The fee is a fixed PRL amount per send, independent of the amount being transferred. (Exact amount: **0.1 PRL** — see §5.)
 - **A real, separate output.** The fee is a `wire.TxOut` in the transaction paying the pinned Necklace fee address. It is visible on-chain and in any block explorer. It is *not* skimmed from change, *not* hidden in the relay fee, and *not* a separate off-chain charge.
 - **Above the dust floor.** The fee output must exceed the Pearl dust threshold (~546 Grain at the default relay fee for a P2TR output; computed from the real output/input vsize). The flat fee amount chosen in §5 must always clear dust. If a configured fee were ever below dust, the build must fail closed rather than emit a dust output.
 - **Always shown before signing.** The confirmation screen (rendered by the extension, per `threat-model.md` §1) itemizes the Necklace fee as its own line with the destination fee address, *before* the user approves. There is no flow in which a signature is produced without the fee having been displayed.
@@ -64,7 +64,7 @@ Total debited from the user = `X + FLAT_FEE + networkRelayFee`. This total is th
 
 These are pinned in `apps/extension/src/tx/fee.ts` and baked into the published build. Changing any of them requires a new, reviewable release (§2).
 
-- **`FLAT_FEE` (the flat Necklace fee):** **1 PRL** = `100,000,000` Grain (`FLAT_FEE_GRAIN = GRAIN_PER_PRL`). Well above the ~546 Grain dust floor.
+- **`FLAT_FEE` (the flat Necklace fee):** **0.1 PRL** = `10,000,000` Grain (`FLAT_FEE_GRAIN = GRAIN_PER_PRL / 10`). Well above the ~546 Grain dust floor.
 - **Necklace fee address — mainnet (`prl…`):** `prl1pl0c9aqvmvhm4ml8nrc7s0cezrgx3el67nwxeywpjcwl6a696hp6s5p8jhf` — pinned, verified witness-v1 P2TR.
 - **Necklace fee address — testnet (`tprl…`):** not pinned (`null`) — sending on testnet **fails closed** until an address is pinned.
 - **Necklace fee address — regtest (`rprl…`):** `rprl1pw53jtgez0wf69n06fchp0ctk48620zdscnrj8heh86wykp9mv20qdcu0t8` — a valid, deterministically-derived **dev/test fixture only** (not a treasury address), kept so the regtest send path and the fee-output unit tests have a valid address. Dead at runtime in the mainnet-only build.

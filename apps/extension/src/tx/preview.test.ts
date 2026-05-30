@@ -103,10 +103,10 @@ describe("buildTxPreview (regtest, fee pinned)", () => {
   });
 
   it("drops dust change into the network fee", () => {
-    // Choose an amount that leaves < dust as change: recipient 2 + 1 PRL fee
-    // (3 PRL) + the 1000-Grain floored relay fee + ~400 Grain leftover, which is
-    // below the dust floor (~546) and gets rolled into the network fee.
-    const inputs = [utxo(3.000014)];
+    // Choose an amount that leaves < dust as change: recipient 2 + 0.1 PRL fee
+    // (2.1 PRL) + the 1000-Grain floored relay fee + ~400 Grain leftover, which
+    // is below the dust floor (~546) and gets rolled into the network fee.
+    const inputs = [utxo(2.100014)];
     const recipientValue = 2n * GRAIN_PER_PRL;
     const p = buildTxPreview({
       network: "regtest",

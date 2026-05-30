@@ -53,7 +53,7 @@ Blockbook is **untrusted for integrity** (threat-model §2). The client:
 
 - Necklace is a **mainnet** wallet: balance / receive / history / **send** all
   work against real Pearl. The mainnet Necklace fee address is pinned in
-  `src/tx/fee.ts` (flat 1 PRL fee — see `fee-policy.md`); any network without a
+  `src/tx/fee.ts` (flat 0.1 PRL fee — see `fee-policy.md`); any network without a
   pinned fee address still fails closed.
 - `fees()` currently returns Pearl's default relay fee (1000 Grain/kB); wiring
   Blockbook `/estimatefee` is a later refinement once its unit is pinned to a fixture.

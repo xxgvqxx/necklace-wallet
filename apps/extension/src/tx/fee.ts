@@ -28,11 +28,11 @@ import {
 } from "@necklace/shared";
 
 /**
- * The flat Necklace fee, in Grain: 1 PRL per transaction. Materialised as a
+ * The flat Necklace fee, in Grain: 0.1 PRL per transaction. Materialised as a
  * separate, visible P2TR output to the pinned per-network fee address and shown
  * on the confirm screen before signing. Well above the dust floor.
  */
-export const FLAT_FEE_GRAIN: Grain = GRAIN_PER_PRL; // 1 PRL
+export const FLAT_FEE_GRAIN: Grain = GRAIN_PER_PRL / 10n; // 0.1 PRL
 
 /**
  * Pinned per-network Necklace fee addresses. `null` = NOT pinned for that
