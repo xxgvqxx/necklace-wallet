@@ -69,6 +69,22 @@
         scrollbar-width: none;
         -ms-overflow-style: none;
       }
+      /* Liquid (liquid.trade) brand mark: show the official tile that fits the
+         theme — light tile on Monokai dark (default), dark tile on Monokai light. */
+      .nk-liquid-dark-theme {
+        display: inline-flex;
+        align-items: center;
+      }
+      .nk-liquid-light-theme {
+        display: none;
+        align-items: center;
+      }
+      :root[data-theme="light"] .nk-liquid-dark-theme {
+        display: none;
+      }
+      :root[data-theme="light"] .nk-liquid-light-theme {
+        display: inline-flex;
+      }
     </style>
   </head>
   <body>

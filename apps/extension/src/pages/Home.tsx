@@ -13,7 +13,7 @@ import { ApiError, getApiClient, humanizeApiError } from "../api/index.js";
 import { grainToPrl, type Grain } from "@necklace/shared";
 import { Button, ErrorState, Spinner } from "../components/index.js";
 import { MarketStats } from "../components/MarketStats.js";
-import { IconGitHub, IconSearch, IconSettings, IconX } from "../components/icons.js";
+import { IconGitHub, IconSearch, IconSettings, IconX, LiquidLogo } from "../components/icons.js";
 import { Sparkline } from "../components/Sparkline.js";
 import { color, font, radius, space } from "../components/theme.js";
 import { usePrlPrice } from "../price/usePrlPrice.js";
@@ -372,13 +372,17 @@ export function Home({ state, navigate }: HomeProps): React.JSX.Element {
           rel="noopener noreferrer"
           aria-label="Perps on Liquid"
           style={{
+            display: "flex",
+            alignItems: "center",
+            gap: space.xs,
             color: color.textDim,
             textDecoration: "none",
             fontSize: 12,
             fontFamily: font.family,
           }}
         >
-          (perps on liquid!)
+          <LiquidLogo size={14} />
+          <span>perps on liquid!</span>
         </a>
         <a
           href="https://github.com/xxgvqxx/necklace-wallet"

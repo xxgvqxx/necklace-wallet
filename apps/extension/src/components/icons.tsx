@@ -110,3 +110,33 @@ export function IconGitHub({ size = 15, color = "currentColor", title }: IconPro
     </svg>
   );
 }
+
+/**
+ * Liquid brand mark (liquid.trade). Two official tiles swapped by theme via the
+ * `.nk-liquid-*` rules in index.html: the light tile shows on the default
+ * Monokai dark theme, the dark tile on Monokai light.
+ */
+export function LiquidLogo({ size = 14 }: { size?: number }): React.JSX.Element {
+  return (
+    <>
+      <span className="nk-liquid-dark-theme" aria-hidden="true">
+        <svg width={size} height={size} viewBox="0 0 1000 1000" style={{ display: "block" }}>
+          <rect width="1000" height="1000" rx="200" ry="200" fill="#ededff" />
+          <path
+            d="M707.229,438.351l-160.114-241.308c-22.367-33.708-71.865-33.708-94.232,0l-160.115,241.308c-15.885,23.488-27.883,49.822-35.069,78.075-5.028,19.768-7.699,40.477-7.699,61.811,0,138.071,111.929,250,250,250s250-111.93,250-250c0-51.824-15.769-99.963-42.771-139.885h0Z"
+            fill="#131318"
+          />
+        </svg>
+      </span>
+      <span className="nk-liquid-light-theme" aria-hidden="true">
+        <svg width={size} height={size} viewBox="0 0 1000 1000" style={{ display: "block" }}>
+          <rect width="1000" height="1000" rx="200" ry="200" fill="#131318" />
+          <path
+            d="M698.94,440.817l-153.709-231.655c-21.472-32.359-68.991-32.359-90.463,0l-153.71,231.655c-15.25,22.549-26.768,47.829-33.666,74.952-4.826,18.977-7.391,38.857-7.391,59.339,0,132.548,107.452,240,240,240s240-107.453,240-240c0-49.751-15.139-95.965-41.06-134.29h0Z"
+            fill="#ededff"
+          />
+        </svg>
+      </span>
+    </>
+  );
+}
