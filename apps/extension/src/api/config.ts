@@ -2,11 +2,12 @@
  * Build-time chain configuration for the extension.
  *
  * Necklace is MAINNET-ONLY: it reads chain data and broadcasts via the public
- * Pearl Blockbook (Trezor v2 API). Exactly one https host is contacted (the
- * extension's single host_permissions entry + CSP connect-src), pinned here.
+ * Pearl Blockbook (Trezor v2 API). The chain host below is pinned here and in
+ * the manifest host_permissions + CSP connect-src (the SafeTrade price feed is
+ * the only other pinned host).
  *
- * Sending is fail-closed until a real mainnet Necklace fee address is pinned
- * (see ../tx/fee.ts); we never ship a placeholder mainnet fee address.
+ * The mainnet Necklace fee address is pinned in ../tx/fee.ts, so sending is
+ * enabled; any network with no pinned fee address fails closed.
  */
 
 import type { Network } from "@necklace/shared";

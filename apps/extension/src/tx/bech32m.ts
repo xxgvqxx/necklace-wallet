@@ -5,7 +5,7 @@
  * This is NOT cryptography — it is the standard BIP-173/BIP-350 checksum/charset
  * parse used to validate that a user-pasted recipient address is well-formed,
  * has the right HRP for the active network, and carries a valid witness program
- * (api-contract §8: "address validation is client-side first"). The canonical
+ * (address validation is client-side first). The canonical
  * encoder/decoder for signing lives in `@necklace/wallet-core` (pinned to the
  * repo's real KATs); this local copy lets the UI reject bad input before any
  * network call and without pulling a crypto dep into the UI layer.

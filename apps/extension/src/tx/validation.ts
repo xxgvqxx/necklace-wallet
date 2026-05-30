@@ -1,9 +1,9 @@
 /**
  * Local recipient-address and amount validation (Phase 1 format rules).
  *
- * "Address validation is client-side first" (api-contract §8): the extension
- * validates bech32m + witness version + HRP locally before any API call, so a
- * swapped or wrong-network destination is caught before a single byte is sent.
+ * Address validation is client-side first: the extension validates bech32m +
+ * witness version + HRP locally before any API call, so a swapped or
+ * wrong-network destination is caught before a single byte is sent.
  *
  * Phase 1 facts enforced here (docs/protocol-findings.md, derived-address.json):
  *   - bech32m (BIP-350) only; legacy bech32 v0 is REJECTED.

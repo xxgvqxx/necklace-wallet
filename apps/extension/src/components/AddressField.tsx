@@ -1,6 +1,6 @@
 /**
  * AddressField — a recipient-address input that validates LOCALLY (client-side
- * first, api-contract §8) against the active network as the user types. It
+ * first) against the active network as the user types. It
  * shows the decoded HRP/witness state and a clear reason on failure so a
  * swapped or wrong-network destination is visible before any send (threat-model
  * §1: address shown decoded). It never calls the network to validate.

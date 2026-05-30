@@ -14,13 +14,16 @@ indexer. This removes all chain infra from the MVP critical path.
 - `apps/extension/src/api/client.ts` defines a `ChainClient` interface
   (`health/tip/balance/utxos/txs/fees/broadcast`).
 - `apps/extension/src/api/blockbook-client.ts` (`BlockbookClient`) implements it
-  against Blockbook; `ApiClient` (self-hosted API) implements the same
-  interface. The UI and send-flow are unchanged — only `getApiClient()` picks one.
-- Selected by `apps/extension/src/api/config.ts`:
-  - `CHAIN_BACKEND = "blockbook"` → host `https://blockbook.pearlresearch.ai`, network `mainnet`.
-  - `CHAIN_BACKEND = "necklace-api"` → host `https://api.necklace.example`, network `regtest` (local-node dev).
-- `manifest.json` `host_permissions` + CSP `connect-src` are pinned to the one
-  Blockbook host. Switching backend requires updating the manifest in lockstep.
+  against Blockbook and is the implementation used by the shipped wallet.
+  `ApiClient` (a self-hosted read/broadcast API client) implements the same
+  interface and remains in the tree as an alternative, but is not wired into the
+  mainnet-only build.
+- `apps/extension/src/api/config.ts` pins the single chain host
+  (`https://blockbook.pearlresearch.ai`) and `ACTIVE_NETWORK = "mainnet"`; there
+  is no runtime backend selector.
+- `manifest.json` `host_permissions` + CSP `connect-src` are pinned to the
+  Blockbook chain host plus the SafeTrade price host. Changing hosts requires
+  updating the manifest in lockstep.
 
 ## Blockbook endpoints used
 
@@ -46,13 +49,11 @@ Blockbook is **untrusted for integrity** (threat-model §2). The client:
 
 **Privacy:** like any light wallet, the provider observes which addresses we query.
 
-## Consequences / TODO
+## Consequences / notes
 
-- This makes Necklace a **mainnet** wallet: balance / receive / history work
-  against real Pearl now. **Sending is fail-closed** — the mainnet Necklace fee
-  address in `src/tx/fee.ts` is `null` (we deliberately do not ship a placeholder
-  mainnet fee address). Pin a real, user-controlled mainnet fee address to enable sends.
+- Necklace is a **mainnet** wallet: balance / receive / history / **send** all
+  work against real Pearl. The mainnet Necklace fee address is pinned in
+  `src/tx/fee.ts` (flat 1 PRL fee — see `fee-policy.md`); any network without a
+  pinned fee address still fails closed.
 - `fees()` currently returns Pearl's default relay fee (1000 Grain/kB); wiring
   Blockbook `/estimatefee` is a later refinement once its unit is pinned to a fixture.
-- The site's privacy/"single API host" copy should be updated to name the
-  Blockbook provider before launch.

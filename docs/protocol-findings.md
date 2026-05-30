@@ -174,7 +174,7 @@ Evidence about the cgo/FFI boundary:
 | simnet | `simnet` | `rprl` | `0x64` | 18555 | 1 | true | private; no DNS seeds; `PoWNoRetargeting` |
 | signet | `signet` | `tprl` | `0xef` | 38333 | 1 | false | not currently operated by Pearl |
 
-- **User decision = dev on testnet/regtest.** Concretely:
+- **Dev-network decision (Phase 1) = testnet/regtest.** _(Superseded: the shipped extension is mainnet-only; this section is retained for the network params, which remain accurate.)_ Concretely:
   - Use `chaincfg.RegressionNetParams` (`Name "regtest"`, HRP `rprl`, WIF byte `0xef`, port 18444) for a local single-node dev chain — it has `PoWNoRetargeting=true`, `ReduceMinDifficulty=true`, `GenerateSupported=true` so blocks can be mined on demand, and `RelayNonStdTxs=true`. This is the analogue of `pearld --regtest` (btcd-style `--regtest` flag; equivalently `pearld -u rpcuser -P rpcpass` against the regtest params on the backend node).
   - Use `chaincfg.TestNetParams` (`Name "testnet"`, HRP `tprl`, port 44110) for the shared/public dev testnet.
 - HD coin type: mainnet uses **808276** (ASCII "PRL"); **all test networks use SLIP-44 coin type 1**. The extension must select coin type by network when building the BIP-86 path.

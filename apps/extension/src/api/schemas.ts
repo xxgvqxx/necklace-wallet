@@ -8,7 +8,7 @@
  * the sighash.
  *
  * These schemas extend / specialise the shared boundary schemas where the
- * documented HTTP contract (docs/api-contract.md) differs in detail from the
+ * documented HTTP contract differs in detail from the
  * generic internal shapes in `@necklace/shared`. Grain amounts arrive as JSON
  * integers (the contract uses `int64` Grain on the wire); we coerce them to the
  * `Grain` bigint domain via {@link grainFromJson} so the money path never

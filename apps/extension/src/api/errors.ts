@@ -63,7 +63,7 @@ export class ApiError extends Error {
     this.code = opts.code;
   }
 
-  /** Maps a server error `code` (api-contract §9) to an {@link ApiErrorKind}. */
+  /** Maps a server error `code` to an {@link ApiErrorKind}. */
   static fromCode(
     code: string,
     message: string,

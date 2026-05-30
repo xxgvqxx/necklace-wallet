@@ -1,6 +1,6 @@
 # Necklace Wallet — Threat Model
 
-**Status:** Phase 0 product/security doc. Grounded in `docs/protocol-findings.md` (Phase 1, authoritative).
+**Status:** Implemented. Grounded in `docs/protocol-findings.md` (Phase 1, authoritative).
 **Date:** 2026-05-29
 **Scope:** Necklace is a non-custodial Chrome MV3 wallet for Pearl (PRL). The extension owns key import/generation, encrypts the key locally in `chrome.storage.local`, derives the address locally, builds and Schnorr-signs transactions locally, and POSTs **only** the signed raw transaction hex to a broadcast API. No private keys, seeds, or passwords ever leave the device.
 
@@ -21,7 +21,7 @@
 - No server-side signing. The private key never leaves the extension.
 - No private keys, seeds, or passwords are ever sent to any backend service.
 - No remote executable JS/WASM in the extension; strict CSP; signing code is bundled and audited (TS port pinned to repo KATs).
-- Minimal permissions: `storage` + exactly one API host. No `tabs`, no broad host permissions, no `<all_urls>`.
+- Minimal permissions: `storage` + exactly two pinned HTTPS hosts — the chain backend (`blockbook.pearlresearch.ai`) and the price feed (`safetrade.com`). No `tabs`, no broad host permissions, no `<all_urls>`.
 - The flat Necklace fee is an explicit, visible extra output shown before signing — never hidden.
 - Never log secrets. No private keys, seeds, passwords, or decrypted material in any log, error message, or telemetry.
 - No XMSS signing in-browser (see §6 — the dominant residual-risk driver).
@@ -66,8 +66,8 @@ The backend (`pearld` + broadcast/read API + indexer) is taken over, or a man-in
 **Mitigation.**
 - **Signing is local; the API only broadcasts.** A compromised API can never sign on the user's behalf or learn the key. The worst it can do with `POST /tx/broadcast` is drop or delay a fully-formed, already-signed tx.
 - **The signed transaction is self-protecting.** BIP-341 commits to the destination, amounts, and (critically) the input prevout values inside the sighash. If the API returns a **false prevout value**, the resulting signature is computed over a wrong value and the tx is simply invalid / rejected by honest nodes — funds are not stolen, the send just fails. The fee the user actually pays is fixed by the outputs they approved, not by the API.
-- **Client-side validation of API responses.** The extension validates response shapes (see `api-contract.md`), rejects malformed payloads, and treats all response bytes as data (never `eval`'d — enforced by CSP).
-- **HTTPS-only, single pinned API host.** The one declared host permission is HTTPS. No plaintext, no fallback host.
+- **Client-side validation of API responses.** The extension validates every response shape with zod, rejects malformed payloads, and treats all response bytes as data (never `eval`'d — enforced by CSP).
+- **HTTPS-only, pinned hosts.** Both declared host permissions are HTTPS and pinned in the manifest. No plaintext, no fallback host. The price host (`safetrade.com`) is likewise untrusted and **display-only** — it never touches keys, signing, or the Grain amount math; a forged price can only mislead the portfolio readout, never move funds.
 - **Independent fee floor.** The extension does not blindly trust `GET /fees/recommended`; it enforces its own sane min/max bounds and the dust floor locally so a malicious API cannot push an absurd fee.
 - **No secrets in requests.** Broadcast carries only `rawTxHex`. Balance/UTXO/tx reads carry only public addresses. A compromised API or MITM sees nothing secret.
 
@@ -86,7 +86,7 @@ An attacker obtains a copy of the Chrome profile (disk image, backup, synced pro
 
 **Mitigation.**
 - **The key at rest is encrypted with a user-chosen password.** Storage holds ciphertext only; the plaintext key exists only transiently in memory while unlocked.
-- **Strong KDF.** Password-based key derivation uses a memory-hard / high-cost KDF (e.g. scrypt/PBKDF2 at conservative parameters — exact choice TODO in implementation) with a per-wallet random salt, and authenticated encryption (AEAD) so tampering is detected.
+- **Strong KDF.** The passphrase is stretched with **PBKDF2-HMAC-SHA256 at 600,000 iterations** (OWASP-aligned) over a per-vault random salt, deriving a non-extractable **AES-256-GCM** key (AEAD, so tampering is detected). The KDF is pluggable — Argon2id is supported as a memory-hard upgrade and is lazy-loaded so PBKDF2-only vaults never pull it in.
 - **Lock on idle / on browser close.** The decrypted key is held only while the wallet is unlocked; an auto-lock timeout clears it from memory.
 - **Never log secrets.** Decrypted material is never written to logs, the DOM beyond the necessary in-memory use, or any persisted field.
 - **No password sent anywhere.** The password is used only locally for decryption (reinforces §2: even a compromised API gains nothing).
@@ -107,7 +107,7 @@ A future version of the extension (via a compromised publisher account, a malici
 **Mitigation.**
 - **Strict CSP + no remote code** means a malicious update must ship its payload *in the published package*, where it is reviewable. There is no runtime-fetched code path to hide behind. This makes auditing the published artifact meaningful.
 - **Reproducible / verifiable builds (goal).** The build is deterministic from pinned sources so the published artifact can be checked against the source. Crypto primitives are audited libraries pinned to versions and to the repo's KATs; dependency versions are locked.
-- **Minimal permissions** cap the blast radius: with only `storage` + one API host, a malicious update cannot reach arbitrary origins to exfiltrate to (it can only talk to the one declared host — and adding a new host permission triggers a re-prompt the user can notice).
+- **Minimal permissions** cap the blast radius: with only `storage` + two pinned hosts, a malicious update cannot reach arbitrary origins to exfiltrate to (it can only talk to the declared hosts — and adding a new host permission triggers a re-prompt the user can notice).
 - **No silent permission escalation.** Any manifest permission change forces a user re-consent on update, which is a visible signal.
 - **Open source + published hashes** let the community detect a divergent published build.
 
@@ -125,7 +125,7 @@ The same signed transaction (or a conflicting double-spend) is broadcast more th
 **Assumption.** Network and UI errors cause retries; a captured `rawTxHex` could be re-submitted; the user might resubmit out of impatience.
 
 **Mitigation.**
-- **A signed tx is idempotent by txid.** Re-broadcasting the *same* fully-signed transaction does not double-spend: it has the same txid, spends the same inputs, and an honest node/mempool deduplicates it. The API contract (`api-contract.md`) defines `already-known` as a **non-error / success-equivalent** outcome so the UI can treat a duplicate as "already accepted" rather than a new send.
+- **A signed tx is idempotent by txid.** Re-broadcasting the *same* fully-signed transaction does not double-spend: it has the same txid, spends the same inputs, and an honest node/mempool deduplicates it. The chain client maps a duplicate broadcast to a **non-error / success-equivalent** outcome (`ALREADY_KNOWN`) so the UI can treat it as "already accepted" rather than a new send.
 - **No fee surprise on retry.** Because the fee (network relay fee + the explicit Necklace fee output) is fixed inside the signed tx, retrying cannot multiply the fee — the same tx is the same tx.
 - **Client-side send guard.** The UI disables the send action after the first submit for a given built tx and surfaces the returned `txid`, so a user does not build a *second, different* tx unintentionally.
 - **Replay across networks is impossible by construction.** Addresses are HRP-bound and the BIP-341 sighash commits to network-specific details; a regtest/testnet tx is meaningless on mainnet and vice versa.
