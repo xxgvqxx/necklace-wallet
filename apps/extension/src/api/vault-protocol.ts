@@ -99,22 +99,26 @@ export interface CreatePayload {
 }
 
 /**
- * Payload to ADD a new account to an already-unlocked vault. No password is
- * needed — the in-memory wallet key (from unlock) re-encrypts the new secret.
- * Reuses the create/import shapes minus the password.
+ * Payload to ADD a new account to an already-unlocked vault. The wallet password
+ * SHOULD be supplied: it re-derives the wallet key needed to encrypt the new
+ * account, which is required whenever the MV3 session was rehydrated after
+ * worker eviction and so has no in-memory key (the common case after reopening
+ * the popup). When omitted, the worker falls back to the in-memory key (only
+ * present for a same-worker add right after unlock).
  *
  *  - `mode: "generate"` -> generates a fresh mnemonic (returned once for backup)
  *  - `mode: "import"`   -> imports WIF / raw hex / mnemonic / xpub (no mnemonic
  *    returned)
  */
 export type AddAccountPayload =
-  | { mode: "generate"; label?: string; wordCount?: 12 | 24 }
+  | { mode: "generate"; label?: string; wordCount?: 12 | 24; password?: string }
   | {
       mode: "import";
       label?: string;
       kind: KeyImportKind;
       secret: string;
       mnemonicPassphrase?: string;
+      password?: string;
     };
 
 /** Messages the UI sends to the background worker. */

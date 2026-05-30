@@ -165,6 +165,7 @@ export async function handleMessage(
           const { status, mnemonic } = await addAccount({
             mode: "generate",
             ...(p.label !== undefined ? { label: p.label } : {}),
+            ...(p.password !== undefined ? { password: p.password } : {}),
           });
           return { type: "ACCOUNT_ADDED", state: toVaultState(status), mnemonic };
         }
@@ -173,6 +174,7 @@ export async function handleMessage(
           mode: "import",
           secret: parsed,
           ...(p.label !== undefined ? { label: p.label } : {}),
+          ...(p.password !== undefined ? { password: p.password } : {}),
         });
         return { type: "ACCOUNT_ADDED", state: toVaultState(status), mnemonic };
       }

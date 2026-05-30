@@ -21,7 +21,7 @@
  * completion. It is never logged or sent to the network.
  */
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { vault, VaultError } from "../api/index.js";
 import {
   Button,
@@ -50,7 +50,7 @@ export function CreateWallet({
   mode = "create",
 }: CreateWalletProps): React.JSX.Element {
   const isAdd = mode === "add";
-  const [step, setStep] = useState<Step>(isAdd ? "backup" : "password");
+  const [step, setStep] = useState<Step>("password");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [busy, setBusy] = useState(false);
@@ -58,7 +58,6 @@ export function CreateWallet({
 
   const [mnemonic, setMnemonic] = useState("");
   const [acknowledged, setAcknowledged] = useState(false);
-  const [generating, setGenerating] = useState(false);
 
   const words = useMemo(
     () => (mnemonic ? mnemonic.trim().split(/\s+/) : []),
@@ -67,22 +66,25 @@ export function CreateWallet({
 
   const passwordsOk = password.length >= 8 && password === confirm;
 
-  // In "add" mode, generate the new account immediately (no password screen).
-  useEffect(() => {
-    if (!isAdd || mnemonic || generating) return;
-    setGenerating(true);
-    void (async () => {
-      setError(null);
-      try {
-        const res = await vault.addAccount({ mode: "generate" });
-        setMnemonic(res.mnemonic);
-      } catch (err) {
+  async function handleAddAccount(): Promise<void> {
+    if (password.length === 0 || busy) return;
+    setBusy(true);
+    setError(null);
+    try {
+      const res = await vault.addAccount({ mode: "generate", password });
+      setMnemonic(res.mnemonic);
+      setPassword("");
+      setStep("backup");
+    } catch (err) {
+      if (err instanceof VaultError && err.code === "WRONG_PASSWORD") {
+        setError("Wrong password. Re-enter your wallet password to add an account.");
+      } else {
         setError(err instanceof Error ? err.message : "Couldn't add an account.");
-      } finally {
-        setGenerating(false);
       }
-    })();
-  }, [isAdd, mnemonic, generating]);
+    } finally {
+      setBusy(false);
+    }
+  }
 
   async function handleGenerate(): Promise<void> {
     if (!passwordsOk || busy) return;
@@ -112,6 +114,32 @@ export function CreateWallet({
   }
 
   if (step === "password") {
+    if (isAdd) {
+      return (
+        <div style={{ display: "flex", flexDirection: "column", gap: space.md }}>
+          <Header title="Add account" onBack={onBack} />
+          <p style={{ fontSize: 12, color: color.textDim, lineHeight: 1.5, margin: 0 }}>
+            Enter your wallet password to generate and encrypt a new account.
+          </p>
+          <PasswordField
+            value={password}
+            onChange={setPassword}
+            label="Wallet password"
+            placeholder="Enter your wallet password"
+            autoFocus
+          />
+          {error && <ErrorState message={error} />}
+          <Button
+            fullWidth
+            busy={busy}
+            disabled={password.length === 0}
+            onClick={handleAddAccount}
+          >
+            Add account
+          </Button>
+        </div>
+      );
+    }
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: space.md }}>
         <Header title="Create wallet" onBack={onBack} />
@@ -152,11 +180,6 @@ export function CreateWallet({
           title={isAdd ? "Back up your new account" : "Back up your phrase"}
           {...(isAdd ? { onBack } : {})}
         />
-        {isAdd && words.length === 0 && !error && (
-          <p style={{ fontSize: 12, color: color.textDim, lineHeight: 1.5, margin: 0 }}>
-            Generating your new account…
-          </p>
-        )}
         {error && <ErrorState message={error} />}
         <p style={{ fontSize: 12, color: color.warn, lineHeight: 1.5, margin: 0 }}>
           Write these words down in order and keep them somewhere safe. Anyone with

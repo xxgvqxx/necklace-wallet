@@ -220,19 +220,21 @@ export async function generateNewWallet(
 
 /** Describes a new account to add to an already-unlocked vault. */
 export type AddAccountSpec =
-  | { mode: "generate"; label?: string }
-  | { mode: "import"; label?: string; secret: DecryptedSecret };
+  | { mode: "generate"; label?: string; password?: string }
+  | { mode: "import"; label?: string; secret: DecryptedSecret; password?: string };
 
 /**
- * Add a new account to an ALREADY-UNLOCKED vault. No password is needed: the
- * in-memory wallet key (from unlock) re-encrypts the new account's secret. The
- * new account is appended, persisted, added to the session map, and made active.
+ * Add a new account to an ALREADY-UNLOCKED vault. The new account is appended,
+ * persisted, added to the session map, and made active.
  *
  * Generation returns the backup mnemonic (shown once). Import returns no
  * mnemonic.
  *
- * Requires the wallet to be unlocked AND the in-memory key to be available
- * (a rehydrated session has key=null — the UI must re-unlock first).
+ * The wallet key that re-encrypts the new secret comes from `spec.password`
+ * (re-derived, then verified by decrypting an existing account) when supplied —
+ * required whenever the session was rehydrated after MV3 worker eviction and so
+ * carries no in-memory key (the common case after reopening the popup). Without
+ * a password it falls back to the in-memory key, throwing if that is unavailable.
  */
 export async function addAccount(
   spec: AddAccountSpec,
@@ -240,14 +242,23 @@ export async function addAccount(
   if (!isUnlocked()) throw new LockedError("wallet is locked");
   const file = await loadVaultFile();
   if (!file) throw new NoVaultError("no vault to add an account to");
-  // The in-memory wallet key re-encrypts the new secret. A session rehydrated
-  // after worker eviction carries no key (it cannot be serialized); the UI must
-  // re-unlock (re-enter the password) before adding an account.
+  // The wallet key re-encrypts the new account's secret. Prefer re-deriving it
+  // from the supplied password (robust to MV3 worker eviction, which leaves a
+  // rehydrated session without an in-memory key — the common case when adding an
+  // account after reopening the popup). Decrypting an existing account with the
+  // derived key both verifies the password and yields exactly the wallet key the
+  // other accounts are encrypted under. Fall back to the in-memory key only when
+  // no password is supplied (a same-worker add right after unlock).
   let key: CryptoKey;
-  try {
-    key = requireKey();
-  } catch {
-    throw new LockedError("re-enter your password to add an account");
+  if (spec.password !== undefined) {
+    key = await deriveAesKey(spec.password, file.kdfParams);
+    await decryptOrThrow(key, activeAccount(file).payload);
+  } else {
+    try {
+      key = requireKey();
+    } catch {
+      throw new LockedError("re-enter your password to add an account");
+    }
   }
 
   const chain = file.accounts[0]?.chain ?? "pearl-mainnet";
