@@ -1,5 +1,5 @@
 /**
- * Typed HTTP client for the Railway read/broadcast API (docs/api-contract.md).
+ * Typed HTTP client for the read/broadcast API.
  *
  * This is the ONLY network host the extension talks to. It is declared as the
  * extension's single host permission. The client:
@@ -37,7 +37,7 @@ import {
 
 /**
  * The chain read/broadcast surface the UI + send-flow depend on. Implemented by
- * {@link ApiClient} (self-hosted Railway API) and {@link BlockbookClient}
+ * {@link ApiClient} (self-hosted API) and {@link BlockbookClient}
  * (public Pearl Blockbook), so the backend is swappable via config without
  * touching any screen.
  */

@@ -12,7 +12,7 @@
  *      SIGN time only; it never touches the network and is not retained here.
  *   3. The vault signs the exact `draft` from the preview and returns the signed
  *      `rawHex` + `txid`. The key never leaves the worker.
- *   4. The UI POSTs only `rawHex` to the Railway broadcast API. A duplicate
+ *   4. The UI POSTs only `rawHex` to the broadcast API. A duplicate
  *      (`ALREADY_KNOWN`) is treated as success (idempotent retry).
  *
  * This module performs NO signing itself and holds NO key. The only secret it

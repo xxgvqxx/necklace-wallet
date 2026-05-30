@@ -36,7 +36,7 @@
     "_rawTxNote": "Standard btcd SegWit serialization: version(4 LE) | 0x00 marker | 0x01 flag | varint nIn | inputs(outpoint 36 + scriptlen + sequence 4) | varint nOut | outputs(value 8 LE + scriptlen + pkScript) | witness(per input: varint nItems + items) | locktime(4 LE)."
   },
   "broadcast": {
-    "_constraint": "Necklace signs locally; only this rawTxHex is POSTed to the Railway broadcast API. No private key or password ever leaves the extension.",
-    "method": "sendrawtransaction-equivalent on the Railway pearld + API"
+    "_constraint": "Necklace signs locally; only this rawTxHex is POSTed to the broadcast API. No private key or password ever leaves the extension.",
+    "method": "sendrawtransaction-equivalent on the self-hosted pearld + API"
   }
 }

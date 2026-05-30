@@ -1,1 +1,1 @@
-# Railway API client (fetch utxos + prevout values; POST signed raw tx hex only). Filled in by the api agent.
+# API client (fetch utxos + prevout values; POST signed raw tx hex only). Filled in by the api agent.

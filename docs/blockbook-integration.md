@@ -14,7 +14,7 @@ indexer. This removes all chain infra from the MVP critical path.
 - `apps/extension/src/api/client.ts` defines a `ChainClient` interface
   (`health/tip/balance/utxos/txs/fees/broadcast`).
 - `apps/extension/src/api/blockbook-client.ts` (`BlockbookClient`) implements it
-  against Blockbook; `ApiClient` (self-hosted Railway API) implements the same
+  against Blockbook; `ApiClient` (self-hosted API) implements the same
   interface. The UI and send-flow are unchanged — only `getApiClient()` picks one.
 - Selected by `apps/extension/src/api/config.ts`:
   - `CHAIN_BACKEND = "blockbook"` → host `https://blockbook.pearlresearch.ai`, network `mainnet`.

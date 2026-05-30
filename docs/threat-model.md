@@ -2,7 +2,7 @@
 
 **Status:** Phase 0 product/security doc. Grounded in `docs/protocol-findings.md` (Phase 1, authoritative).
 **Date:** 2026-05-29
-**Scope:** Necklace is a non-custodial Chrome MV3 wallet for Pearl (PRL). The extension owns key import/generation, encrypts the key locally in `chrome.storage.local`, derives the address locally, builds and Schnorr-signs transactions locally, and POSTs **only** the signed raw transaction hex to a Railway broadcast API. No private keys, seeds, or passwords ever leave the device.
+**Scope:** Necklace is a non-custodial Chrome MV3 wallet for Pearl (PRL). The extension owns key import/generation, encrypts the key locally in `chrome.storage.local`, derives the address locally, builds and Schnorr-signs transactions locally, and POSTs **only** the signed raw transaction hex to a broadcast API. No private keys, seeds, or passwords ever leave the device.
 
 ---
 
@@ -13,14 +13,13 @@
 | Component | Trust level | Holds secrets? |
 |---|---|---|
 | Extension (background/service worker + UI) | Trusted (the TCB) | Yes — encrypted key in `chrome.storage.local` |
-| Railway API (`pearld` + read/broadcast + Postgres/NeonDB indexer) | **Untrusted for confidentiality and integrity** | No |
-| Vercel site/docs | Untrusted; public, read-only content | No |
+| Backend API (`pearld` + read/broadcast + Postgres indexer) | **Untrusted for confidentiality and integrity** | No |
 | Visited websites / dApps | **Hostile by default** | No |
 
 **Core invariants (non-negotiable, from project constraints):**
 
 - No server-side signing. The private key never leaves the extension.
-- No private keys, seeds, or passwords are ever sent to Railway or Vercel.
+- No private keys, seeds, or passwords are ever sent to any backend service.
 - No remote executable JS/WASM in the extension; strict CSP; signing code is bundled and audited (TS port pinned to repo KATs).
 - Minimal permissions: `storage` + exactly one API host. No `tabs`, no broad host permissions, no `<all_urls>`.
 - The flat Necklace fee is an explicit, visible extra output shown before signing — never hidden.
@@ -58,11 +57,11 @@ A visited web page (or a malicious dApp) attempts to extract keys, trick the use
 
 ---
 
-## 2. Compromised API (Railway)
+## 2. Compromised API
 
-The Railway backend (`pearld` + broadcast/read API + indexer) is taken over, or a man-in-the-middle sits between the extension and the API.
+The backend (`pearld` + broadcast/read API + indexer) is taken over, or a man-in-the-middle sits between the extension and the API.
 
-**Assumption.** Railway is **untrusted**. A compromised API can: lie about balances/UTXOs, return false prevout values, withhold or delay broadcast, return forged tip/fee data, or attempt to inject a malicious payload in responses. It **cannot** obtain the private key (it is never sent) and **cannot** alter a signed transaction without invalidating it.
+**Assumption.** The backend is **untrusted**. A compromised API can: lie about balances/UTXOs, return false prevout values, withhold or delay broadcast, return forged tip/fee data, or attempt to inject a malicious payload in responses. It **cannot** obtain the private key (it is never sent) and **cannot** alter a signed transaction without invalidating it.
 
 **Mitigation.**
 - **Signing is local; the API only broadcasts.** A compromised API can never sign on the user's behalf or learn the key. The worst it can do with `POST /tx/broadcast` is drop or delay a fully-formed, already-signed tx.

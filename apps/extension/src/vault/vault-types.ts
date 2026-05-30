@@ -6,7 +6,7 @@
  * passphrase. Plaintext key material exists only transiently in memory while the
  * wallet is unlocked (see `session.ts`); it is NEVER persisted in the clear,
  * NEVER written to `chrome.storage.sync`, and NEVER logged or sent to the
- * network. The Railway/Vercel backends only ever receive a signed raw tx hex.
+ * network. The backend services only ever receive a signed raw tx hex.
  *
  * Protocol facts encoded here come from `docs/protocol-findings.md`.
  */

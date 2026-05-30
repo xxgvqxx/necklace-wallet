@@ -1,5 +1,5 @@
 /**
- * Wire schemas for the Railway read/broadcast API, validated with zod.
+ * Wire schemas for the read/broadcast API, validated with zod.
  *
  * The API is UNTRUSTED for confidentiality and integrity (threat-model §2): the
  * extension validates every response shape, treats all bytes as inert data

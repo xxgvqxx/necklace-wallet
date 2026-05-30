@@ -1,6 +1,6 @@
 /**
  * Runtime validation schemas (zod) for boundary data: messages crossing the
- * extension's port boundary and payloads exchanged with the Railway API.
+ * extension's port boundary and payloads exchanged with the backend API.
  *
  * Grain amounts are validated as bigints (or numeric strings coerced to bigint)
  * so that nothing on the money path ever round-trips through a float.

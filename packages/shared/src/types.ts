@@ -72,7 +72,7 @@ export type KeyImportKind =
   | "xpub"
   | "watchOnly";
 
-/** An unspent output as returned by the Railway indexer. */
+/** An unspent output as returned by the indexer. */
 export interface Utxo {
   /** Funding transaction id, big-endian hex (display order). */
   txid: string;

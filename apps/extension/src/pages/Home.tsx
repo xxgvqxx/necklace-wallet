@@ -2,7 +2,7 @@
  * Home — the balance dashboard. Shows the wallet's confirmed (and pending)
  * balance in PRL, the active network, and the primary Send / Receive actions.
  *
- * Balance is fetched from the Railway indexer (untrusted): a wrong balance can
+ * Balance is fetched from the indexer (untrusted): a wrong balance can
  * mislead but cannot cause loss (threat-model §2). The figure is clearly the
  * indexer's view, and the network is shown so the user knows which chain.
  */

@@ -1,5 +1,5 @@
 /**
- * Error taxonomy for the Railway API client.
+ * Error taxonomy for the API client.
  *
  * Every failure the UI can encounter is normalised into one {@link ApiError}
  * with a stable {@link ApiErrorKind}, so screens render a single, consistent

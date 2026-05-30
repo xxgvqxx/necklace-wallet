@@ -175,7 +175,7 @@ Evidence about the cgo/FFI boundary:
 | signet | `signet` | `tprl` | `0xef` | 38333 | 1 | false | not currently operated by Pearl |
 
 - **User decision = dev on testnet/regtest.** Concretely:
-  - Use `chaincfg.RegressionNetParams` (`Name "regtest"`, HRP `rprl`, WIF byte `0xef`, port 18444) for a local single-node dev chain — it has `PoWNoRetargeting=true`, `ReduceMinDifficulty=true`, `GenerateSupported=true` so blocks can be mined on demand, and `RelayNonStdTxs=true`. This is the analogue of `pearld --regtest` (btcd-style `--regtest` flag; equivalently `pearld -u rpcuser -P rpcpass` against the regtest params on the Railway node).
+  - Use `chaincfg.RegressionNetParams` (`Name "regtest"`, HRP `rprl`, WIF byte `0xef`, port 18444) for a local single-node dev chain — it has `PoWNoRetargeting=true`, `ReduceMinDifficulty=true`, `GenerateSupported=true` so blocks can be mined on demand, and `RelayNonStdTxs=true`. This is the analogue of `pearld --regtest` (btcd-style `--regtest` flag; equivalently `pearld -u rpcuser -P rpcpass` against the regtest params on the backend node).
   - Use `chaincfg.TestNetParams` (`Name "testnet"`, HRP `tprl`, port 44110) for the shared/public dev testnet.
 - HD coin type: mainnet uses **808276** (ASCII "PRL"); **all test networks use SLIP-44 coin type 1**. The extension must select coin type by network when building the BIP-86 path.
 - HD version bytes (BIP-84/SegWit style, repurposed for Taproot): mainnet `zprv/zpub` (`04b2430c`/`04b24746`); testnet/regtest `vprv/vpub` (`045f18bc`/`045f1cf6`); simnet `sprv/spub`; signet `tprv/tpub`. The extension should expect `v...`-prefixed xpubs on testnet/regtest.
@@ -184,10 +184,10 @@ Evidence about the cgo/FFI boundary:
 
 ## 9. Cross-cutting consequences for Necklace
 
-1. **Sign in TS, broadcast raw.** Build + Schnorr-sign the tx locally; POST only the signed raw tx hex to the Railway broadcast API. Matches the non-custodial constraint.
+1. **Sign in TS, broadcast raw.** Build + Schnorr-sign the tx locally; POST only the signed raw tx hex to the broadcast API. Matches the non-custodial constraint.
 2. **Address type:** generate/spend **P2TR (witness v1, bech32m)** only for MVP. P2MR (v2) and XMSS script-path are out of scope.
 3. **Fees:** relay fee is Grain/kB (default 1000); the Necklace flat fee is an explicit visible extra P2TR output above the ~546-Grain dust floor.
-4. **Input values are mandatory** for BIP-341 sighash — the extension must fetch prevout values (from the Railway indexer) for every input it signs.
+4. **Input values are mandatory** for BIP-341 sighash — the extension must fetch prevout values (from the indexer) for every input it signs.
 5. **WIF import** uses standard base58check with Pearl's `PrivateKeyID` bytes; reuse `@scure/base` base58check + the byte tables in §8.
 6. **Defer XMSS with a written rationale** (this doc) — do not generate or sign XMSS state in-browser. Wallet generation is still allowed because it only needs secp256k1 + deterministic public derivation.
 
