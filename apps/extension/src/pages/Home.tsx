@@ -367,6 +367,20 @@ export function Home({ state, navigate }: HomeProps): React.JSX.Element {
           <span>GVQ_xx</span>
         </a>
         <a
+          href="https://liquid.trade"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Perps on Liquid"
+          style={{
+            color: color.textDim,
+            textDecoration: "none",
+            fontSize: 12,
+            fontFamily: font.family,
+          }}
+        >
+          (perps on liquid!)
+        </a>
+        <a
           href="https://github.com/xxgvqxx/necklace-wallet"
           target="_blank"
           rel="noopener noreferrer"
