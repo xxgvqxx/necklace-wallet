@@ -12,7 +12,7 @@
     "service_worker": "src/background/service-worker.ts",
     "type": "module"
   },
-  "permissions": ["storage"],
+  "permissions": ["storage", "alarms"],
   "host_permissions": ["https://blockbook.pearlresearch.ai/*", "https://safetrade.com/*"],
   "content_security_policy": {
     "extension_pages": "default-src 'self'; script-src 'self'; object-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://blockbook.pearlresearch.ai https://safetrade.com; frame-ancestors 'none'; base-uri 'self'; form-action 'none'"

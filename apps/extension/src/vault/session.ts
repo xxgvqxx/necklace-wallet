@@ -372,6 +372,19 @@ export function ensureRehydrated(): Promise<void> {
   return rehydratePromise;
 }
 
+/**
+ * Enforce the auto-lock deadline. Safe to call from a `chrome.alarms` handler
+ * after MV3 has evicted the worker (which drops the in-heap setTimeout): it
+ * first restores any persisted session — `rehydrate` clears it if already
+ * expired — then locks if the deadline has now passed. This is the backstop
+ * that makes the configured inactivity timeout hold even while the worker is
+ * not running and the popup is never reopened. No-op when already locked.
+ */
+export async function enforceLockTimeout(): Promise<void> {
+  await ensureRehydrated();
+  if (session && Date.now() >= session.lockAt) lock();
+}
+
 function armTimer(): void {
   if (lockTimer) clearTimeout(lockTimer);
   if (!session) return;

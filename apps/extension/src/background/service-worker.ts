@@ -18,6 +18,7 @@
 import { ensureTrustedAccessLevel } from "../vault/storage.js";
 import {
   ensureRehydrated,
+  enforceLockTimeout,
   loadPersistedLockTimeout,
   lock,
   setSessionStore,
@@ -57,12 +58,31 @@ chrome.runtime.onInstalled?.addListener(() => {
   void ensureTrustedAccessLevel();
 });
 
+// Auto-lock backstop. MV3 evicts the idle worker, which drops the in-heap
+// setTimeout that enforces the inactivity timeout — so a periodic alarm wakes
+// the worker to re-lock the persisted session once its deadline passes, even if
+// the popup is never reopened. The alive-worker case still locks precisely via
+// the setTimeout; this only covers the evicted case.
+const AUTOLOCK_ALARM = "necklace-autolock";
+chrome.alarms?.create(AUTOLOCK_ALARM, { periodInMinutes: 1 });
+chrome.alarms?.onAlarm.addListener((alarm) => {
+  if (alarm.name === AUTOLOCK_ALARM) void enforceLockTimeout();
+});
+
 chrome.runtime.onMessage.addListener(
   (
     message: VaultRequest,
-    _sender,
+    sender,
     sendResponse: (response: VaultResponse) => void,
   ): boolean => {
+    // Defense-in-depth: accept messages only from this extension's own pages.
+    // There is no externally_connectable or content script today, so the sender
+    // can only be the popup — but reject anything else so a future manifest
+    // change can't silently expose the vault to a web origin.
+    if (!sender || sender.id !== chrome.runtime.id) {
+      sendResponse({ type: "ERROR", code: "UNKNOWN", message: "forbidden sender" });
+      return false;
+    }
     // All handlers are async; resolve then respond. Returning true keeps the
     // message channel open for the async sendResponse.
     handleMessage(message).then(
