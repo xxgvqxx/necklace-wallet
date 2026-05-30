@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/logo.png" alt="Necklace — a wallet for Pearl network" width="420">
+</p>
+
 # Necklace
 
 An open-source, **non-custodial** Chrome (Manifest V3) wallet for **Pearl (PRL)**.
@@ -8,10 +12,6 @@ already-reviewed transaction is broadcast. The extension reads chain data and
 broadcasts through a public [Pearl Blockbook](https://blockbook.pearlresearch.ai)
 node, and reads the PRL price from SafeTrade — there is **no Necklace server**
 that ever sees your keys, balances, or addresses.
-
-<p align="center">
-  <img src="docs/home.png" alt="Necklace wallet — Home screen showing portfolio value, the PRL price with a 24h sparkline, and Send / Receive" width="360">
-</p>
 
 > **Warning — self-custody software.** You alone are responsible for your
 > recovery phrase. Anyone who has it can spend your funds, and no one can recover
@@ -31,6 +31,12 @@ that ever sees your keys, balances, or addresses.
 - Address lookup (read-only balance explorer) and a contacts address book
 - Live PRL price, a 24-hour price sparkline, portfolio value, and Monokai
   dark / light themes
+
+## Screenshot
+
+<p align="center">
+  <img src="docs/home.png" alt="Necklace wallet — Home screen showing portfolio value, the PRL price with a 24h sparkline, and Send / Receive" width="320">
+</p>
 
 ## Security model
 
