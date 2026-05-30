@@ -9,6 +9,10 @@ broadcasts through a public [Pearl Blockbook](https://blockbook.pearlresearch.ai
 node, and reads the PRL price from SafeTrade — there is **no Necklace server**
 that ever sees your keys, balances, or addresses.
 
+<p align="center">
+  <img src="docs/home.png" alt="Necklace wallet — Home screen showing portfolio value, the PRL price with a 24h sparkline, and Send / Receive" width="360">
+</p>
+
 > **Warning — self-custody software.** You alone are responsible for your
 > recovery phrase. Anyone who has it can spend your funds, and no one can recover
 > it for you. This software is provided **as-is, without warranty** (see
