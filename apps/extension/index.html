@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Necklace</title>
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      /* Monokai theme tokens. Default = Monokai (dark); [data-theme="light"]
+         overrides to Monokai Light. The popup sets data-theme before render
+         (popup/main.tsx) from the saved preference. */
+      :root {
+        --nk-bg: #272822;
+        --nk-surface: #2e2f28;
+        --nk-surface-alt: #3a3b33;
+        --nk-border: #49483e;
+        --nk-text: #f8f8f2;
+        --nk-text-dim: #b8b6a6;
+        --nk-text-faint: #75715e;
+        --nk-accent: #66d9ef;
+        --nk-accent-text: #1b1c18;
+        --nk-danger: #f92672;
+        --nk-danger-surface: #3a1f2a;
+        --nk-warn: #fd971f;
+        --nk-success: #a6e22e;
+        --nk-fee: #e6db74;
+        color-scheme: dark;
+      }
+      :root[data-theme="light"] {
+        --nk-bg: #fbfbf8;
+        --nk-surface: #ffffff;
+        --nk-surface-alt: #f0efe9;
+        --nk-border: #dddbd0;
+        --nk-text: #2c2a24;
+        --nk-text-dim: #6e6a5c;
+        --nk-text-faint: #9a9588;
+        --nk-accent: #1c92b4;
+        --nk-accent-text: #ffffff;
+        --nk-danger: #d81b60;
+        --nk-danger-surface: #fbe6ee;
+        --nk-warn: #b3650a;
+        --nk-success: #4e8c00;
+        --nk-fee: #9a7d10;
+        color-scheme: light;
+      }
+      /* Remove Chrome's default white popup background + 8px body margin; fill
+         the window with the theme bg. A thin inset lets the rounded card show
+         its corners. */
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: var(--nk-bg);
+      }
+      body {
+        padding: 6px;
+      }
+      /* Hide scrollbars everywhere (scrolling still works). */
+      ::-webkit-scrollbar {
+        width: 0;
+        height: 0;
+        background: transparent;
+      }
+      * {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root" style="width: 360px; min-height: 480px"></div>
+    <script type="module" src="/src/popup/main.tsx"></script>
+  </body>
+</html>

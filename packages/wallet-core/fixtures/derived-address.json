@@ -1,0 +1,74 @@
+{
+  "_description": "Address encoding golden fixtures. The Necklace TS bech32m encoder/decoder MUST reproduce the REAL vectors exactly. Pearl is Taproot-only (witness v1, bech32m); legacy v0 addresses are rejected.",
+  "_source": "node/btcutil/address.go, node/btcutil/address_test.go (TestAddresses/TestEncodeDecodeAddressStringer), node/chaincfg/params.go (Bech32HRPSegwit), wallet/waddrmgr/scoped_manager.go (KeyScopeBIP0086)",
+  "encoding": "bech32m (BIP-350); HRP + '1' + base32(witnessVersion || convertbits(program,8,5))",
+  "witnessVersions": { "1": "P2TR (Taproot)", "2": "P2MR (pay-to-merkle-root, BIP-360)" },
+  "witnessProgramBytes": 32,
+  "hrpByNetwork": {
+    "mainnet": "prl",
+    "testnet": "tprl",
+    "testnet2": "tprl",
+    "regtest": "rprl",
+    "simnet": "rprl",
+    "signet": "tprl"
+  },
+  "bip86": {
+    "_note": "Address derivation path for the Schnorr key-path scope.",
+    "purpose": 86,
+    "coinTypeMainnet": 808276,
+    "coinTypeTestnets": 1,
+    "examplePath": "m/86'/1'/0'/0/0"
+  },
+  "pqScope": {
+    "_note": "Separate XMSS commitment scope. Purpose 222 (0xDE) matches OP_CHECKXMSSSIG. Used to derive the deterministic XMSS pubkey committed into the Taproot tapscript root. NOT used for signing in the MVP.",
+    "purpose": 222,
+    "examplePath": "m/222'/1'/0'/0/0",
+    "seedExpansion": "HKDF-SHA256(ikm=ecPrivKey.Serialize(), info='XMSS-SEED-EXPANSION') -> 64-byte privSeed || 32-byte pubSeed"
+  },
+  "vectors": [
+    {
+      "label": "REAL test-vector (address_test.go)",
+      "name": "taproot mainnet p2tr",
+      "network": "mainnet",
+      "hrp": "prl",
+      "witnessVersion": 1,
+      "witnessProgramHex": "ef46d1aa78101e3350600a5d36045ba97c2670daa91e9f3a48c43c6e739754e6",
+      "address": "prl1paardr2nczq0rx5rqpfwnvpzm497zvux64y0f7wjgcs7xuuuh2nnqksluzv",
+      "valid": true
+    },
+    {
+      "label": "REAL test-vector (address_test.go)",
+      "name": "taproot testnet p2tr (same program, different HRP)",
+      "network": "testnet",
+      "hrp": "tprl",
+      "witnessVersion": 1,
+      "witnessProgramHex": "ef46d1aa78101e3350600a5d36045ba97c2670daa91e9f3a48c43c6e739754e6",
+      "address": "tprl1paardr2nczq0rx5rqpfwnvpzm497zvux64y0f7wjgcs7xuuuh2nnqalmzae",
+      "valid": true
+    },
+    {
+      "label": "REAL invalid-case (address_test.go) - legacy v0 must be rejected",
+      "name": "legacy segwit v0 p2wpkh",
+      "address": "prl1qw508d6qejxtdg4y5r3zarvary0c5xw7k34d768",
+      "network": "mainnet",
+      "valid": false,
+      "reason": "witness version 0 is not supported (Pearl rejects bech32 v0; requires bech32m v1+)"
+    },
+    {
+      "label": "REAL invalid-case (address_test.go)",
+      "name": "legacy segwit v0 p2wsh",
+      "address": "prl1qrp33g0q5c5txsp9arysrx4k6zdkfs4nce4xj0gdcccefvpysxf3qew38es",
+      "network": "mainnet",
+      "valid": false,
+      "reason": "witness version 0 not supported"
+    },
+    {
+      "label": "REAL invalid-case (address_test.go)",
+      "name": "invalid taproot program length",
+      "address": "prl1pqypqxrhwktn",
+      "network": "mainnet",
+      "valid": false,
+      "reason": "witness program must be 32 bytes for v1"
+    }
+  ]
+}

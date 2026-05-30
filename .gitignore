@@ -1,0 +1,35 @@
+# dependencies
+node_modules/
+.pnpm-store/
+
+# build output
+dist/
+build/
+out/
+.next/
+*.tsbuildinfo
+
+# env
+.env
+.env.*
+!.env.example
+
+# proof / local run artifacts
+.proof-run/
+
+# logs
+*.log
+logs/
+npm-debug.log*
+pnpm-debug.log*
+
+# editor / OS
+.DS_Store
+._*
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# misc
+coverage/
+*.local

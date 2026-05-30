@@ -1,0 +1,68 @@
+{
+  "_description": "Unsigned transaction fixture for the Necklace TS tx builder, including the explicit visible Necklace flat-fee output. Structure derived from Pearl source; concrete byte values are ILLUSTRATIVE (regtest) and should be regenerated/verified against pearld once a live regtest is available.",
+  "_source": "wallet/wallet/txauthor/author.go (NewUnsignedTransaction, wire.TxVersion=1), wallet/wallet/createtx.go, wallet/wallet/txsizes/size.go (P2TR sizes, vsize), wallet/wallet/txrules/rules.go (FeeForSerializeSize, DefaultRelayFeePerKb=1000), node/wire/msgtx.go",
+  "network": "regtest",
+  "tx": {
+    "version": 1,
+    "locktime": 0,
+    "segwit": true,
+    "inputs": [
+      {
+        "label": "ILLUSTRATIVE",
+        "previousOutpoint": { "txid": "1111111111111111111111111111111111111111111111111111111111111111", "vout": 0 },
+        "sequence": 4294967295,
+        "scriptSig": "",
+        "witness": [],
+        "_signingContext": {
+          "prevPkScript": "5120ef46d1aa78101e3350600a5d36045ba97c2670daa91e9f3a48c43c6e739754e6",
+          "prevValueGrain": 500000000,
+          "_note": "prevValue is committed in BIP-341 sighash and MUST be supplied to the signer",
+          "tapscriptRootHex": null,
+          "_tapscriptRootNote": "null = standard BIP-86 key (no commitment). If the address carries an XMSS commitment, this is the 32-byte tapscript root used to tweak the Schnorr key on the key-path spend (RawTxInTaprootSignature)."
+        }
+      }
+    ],
+    "outputs": [
+      {
+        "label": "ILLUSTRATIVE - recipient",
+        "role": "recipient",
+        "valueGrain": 200000000,
+        "valuePRL": 2.0,
+        "address": "rprl1p0xnar3qe8q0rx5rqpfwnvpzm497zvux64y0f7wjgcs7xuuuh2nnqx3kqzr",
+        "pkScript": "51207a69f47033813c66a8300a5d36045ba97c2670daa91e9f3a48c43c6e739754e6"
+      },
+      {
+        "label": "ILLUSTRATIVE - NECKLACE FLAT FEE (explicit, visible, shown before signing)",
+        "role": "necklace_fee",
+        "valueGrain": 1000000,
+        "valuePRL": 0.01,
+        "address": "rprl1pfee0000nczq0rx5rqpfwnvpzm497zvux64y0f7wjgcs7xuuuh2nnq000fee",
+        "pkScript": "5120feefee00000000000000000000000000000000000000000000000000000000",
+        "_policy": "Flat PRL amount, above dust floor (~546 Grain), rendered to the user as a separate line item before they approve signing. Never hidden."
+      },
+      {
+        "label": "ILLUSTRATIVE - change",
+        "role": "change",
+        "valueGrain": 298850000,
+        "valuePRL": 2.9885,
+        "address": "rprl1pchange0nczq0rx5rqpfwnvpzm497zvux64y0f7wjgcs7xuuuh2nnqchnge0",
+        "pkScript": "5120c4a96e00000000000000000000000000000000000000000000000000000000",
+        "_note": "Change is a P2TR output to a wallet-derived BIP-86 change address; position randomized before signing (RandomizeChangePosition). Omitted if it would be dust."
+      }
+    ],
+    "feeAccounting": {
+      "totalInputGrain": 500000000,
+      "recipientGrain": 200000000,
+      "necklaceFlatFeeGrain": 1000000,
+      "changeGrain": 298850000,
+      "networkMinerFeeGrain": 150000,
+      "_networkFeeDerivation": "networkMinerFee = ceil(relayFeePerKb * vsize / 1000); relayFeePerKb default 1000 Grain/kB; vsize from txsizes.EstimateVirtualSize (1 P2TR in + 3 P2TR outs). 150000 is illustrative.",
+      "balanceCheck": "totalInput == recipient + necklaceFlatFee + change + networkMinerFee"
+    }
+  },
+  "sighash": {
+    "type": "SigHashDefault (BIP-341)",
+    "algorithm": "taproot key-path; commits version, locktime, all input outpoints+values+scripts, all outputs",
+    "_note": "TS port computes this via @scure/btc-signer / @noble equivalents; pin to KAT once regtest pearld is available."
+  }
+}

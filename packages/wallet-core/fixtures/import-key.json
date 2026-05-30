@@ -1,0 +1,46 @@
+{
+  "_description": "WIF private-key import golden fixtures for the Necklace wallet-core TS port. The TS WIF decoder MUST reproduce these.",
+  "_source": "node/btcutil/wif.go (DecodeWIF/String), node/btcutil/wif_test.go (TestEncodeDecodeWIF), node/chaincfg/params.go (PrivateKeyID)",
+  "_format": "base58check: [1 netID byte][32 priv key big-endian][optional 0x01 compress magic][4 byte double-SHA256 checksum]",
+  "networkPrivateKeyIDs": {
+    "mainnet": "0x80",
+    "testnet": "0xef",
+    "testnet2": "0xef",
+    "regtest": "0xef",
+    "simnet": "0x64",
+    "signet": "0xef"
+  },
+  "vectors": [
+    {
+      "label": "REAL test-vector (wif_test.go)",
+      "name": "mainnet uncompressed",
+      "network": "mainnet",
+      "privateKeyHex": "0c28fca386c7a227600b2fe50b7cae11ec86d3bf1fbe471be89827e19d72aa1d",
+      "compressed": false,
+      "wif": "5HueCGU8rMjxEXxiPuD5BDku4MkFqeZyd4dZ1jvhTVqvbTLvyTJ",
+      "expectedPubKeyHex": "04d0de0aaeaefad02b8bdc8a01a1b8b11c696bd3d66a2c5f10780d95b7df42645cd85228a6fb29940e858e7e55842ae2bd115d1ed7cc0e82d934e929c97648cb0a"
+    },
+    {
+      "label": "REAL test-vector (wif_test.go)",
+      "name": "testnet compressed",
+      "network": "testnet",
+      "privateKeyHex": "dda35a1488fb97b6eb3fe6e9ef2a25814e396fb5dc295fe994b96789b21a0398",
+      "compressed": true,
+      "wif": "cV1Y7ARUr9Yx7BR55nTdnR7ZXNJphZtCCMBTEZBJe1hXt2kB684q",
+      "expectedPubKeyHex": "02eec2540661b0c39d271570742413bd02932dd0093493fd0beced0b7f93addec4"
+    },
+    {
+      "label": "REAL invalid-case test-vector (wif_test.go)",
+      "name": "malformed length",
+      "wif": "deadbeef",
+      "expectError": "ErrMalformedPrivateKey"
+    },
+    {
+      "label": "REAL invalid-case test-vector (wif_test.go)",
+      "name": "bad compress magic",
+      "wif": "KwDiBf89QgGbjEhKnhXJuH7LrciVrZi3qYjgd9M7rFU73sfZr2ym",
+      "expectError": "ErrMalformedPrivateKey"
+    }
+  ],
+  "_note": "Pearl reuses Bitcoin PrivateKeyID bytes, so standard BTC mainnet/testnet WIFs decode unchanged; the network is identified by the leading netID byte, not the bech32 HRP."
+}

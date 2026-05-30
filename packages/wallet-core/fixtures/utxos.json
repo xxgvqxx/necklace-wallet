@@ -1,0 +1,52 @@
+{
+  "_description": "UTXO-set fixture shape consumed by the Necklace coin selector + tx builder. Values are ILLUSTRATIVE (regtest), but the SHAPE and units are derived from Pearl source.",
+  "_source": "wallet/wallet/utxos.go (TransactionOutput, wire.TxOut{Value,PkScript}), wallet/wallet/createtx.go (findEligibleOutputs/Coin), node/btcutil/amount.go (Grain), node/chaincfg/params.go (CoinbaseMaturity=100)",
+  "units": { "valueField": "Grain", "grainPerPRL": 100000000, "decimals": 8 },
+  "rules": {
+    "_note": "Mirrors findEligibleOutputs in createtx.go",
+    "minConfirmationsDefault": 1,
+    "coinbaseMaturityBlocks": 100,
+    "scriptTypeRequired": "p2tr (witness v1) — coin selection skips non-P2TR scripts",
+    "dustFloorApproxGrain": 546,
+    "defaultRelayFeePerKbGrain": 1000
+  },
+  "network": "regtest",
+  "ownerAddress": "rprl1paardr2nczq0rx5rqpfwnvpzm497zvux64y0f7wjgcs7xuuuh2nnq6re8t0",
+  "utxos": [
+    {
+      "label": "ILLUSTRATIVE",
+      "outpoint": { "txid": "1111111111111111111111111111111111111111111111111111111111111111", "vout": 0 },
+      "value": 500000000,
+      "valuePRL": 5.0,
+      "pkScript": "5120ef46d1aa78101e3350600a5d36045ba97c2670daa91e9f3a48c43c6e739754e6",
+      "scriptType": "p2tr",
+      "confirmations": 120,
+      "fromCoinbase": false,
+      "spendable": true
+    },
+    {
+      "label": "ILLUSTRATIVE",
+      "outpoint": { "txid": "2222222222222222222222222222222222222222222222222222222222222222", "vout": 1 },
+      "value": 25000000,
+      "valuePRL": 0.25,
+      "pkScript": "5120ef46d1aa78101e3350600a5d36045ba97c2670daa91e9f3a48c43c6e739754e6",
+      "scriptType": "p2tr",
+      "confirmations": 6,
+      "fromCoinbase": false,
+      "spendable": true
+    },
+    {
+      "label": "ILLUSTRATIVE - immature coinbase, NOT spendable (needs 100 confs)",
+      "outpoint": { "txid": "3333333333333333333333333333333333333333333333333333333333333333", "vout": 0 },
+      "value": 5000000000,
+      "valuePRL": 50.0,
+      "pkScript": "5120ef46d1aa78101e3350600a5d36045ba97c2670daa91e9f3a48c43c6e739754e6",
+      "scriptType": "p2tr",
+      "confirmations": 40,
+      "fromCoinbase": true,
+      "spendable": false
+    }
+  ],
+  "spendableTotalGrain": 525000000,
+  "spendableTotalPRL": 5.25
+}

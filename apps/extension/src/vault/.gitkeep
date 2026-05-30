@@ -1,0 +1,2 @@
+# Encrypted key vault (chrome.storage.local). Filled in by the vault agent.
+# Keys/passwords encrypted at rest; plaintext key held only in the worker while unlocked.

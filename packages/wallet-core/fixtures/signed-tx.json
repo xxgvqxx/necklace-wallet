@@ -1,0 +1,42 @@
+{
+  "_description": "Signed transaction fixture — the witness layout the Necklace TS signer must produce for a Taproot key-path (Schnorr) spend, which is the ONLY signing path in the MVP. Byte values are ILLUSTRATIVE; the witness STRUCTURE is exact, from Pearl source.",
+  "_source": "wallet/wallet/txauthor/author.go (spendTaprootKey: txIn.Witness = {sig}), wallet/wallet/signer.go (ComputeInputScript -> RawTxInTaprootSignature), node/wire/msgtx.go (witness serialization), wallet/wallet/xmss_test.go (key-path still works on commitment addresses)",
+  "network": "regtest",
+  "signingScheme": "BIP-340 Schnorr over secp256k1 (Taproot key-path), SigHashDefault. NO cgo, NO XMSS.",
+  "witnessLayout": {
+    "keyPath": ["<64-byte Schnorr signature (or 65 bytes if a non-default sighash is appended)>"],
+    "_keyPathNote": "Single stack item. With SigHashDefault the signature is 64 bytes and no sighash byte is appended.",
+    "scriptPathXmss_NOT_IN_MVP": [
+      "sig[0:468]", "sig[468:936]", "sig[936:1404]", "sig[1404:1872]", "sig[1872:2340]",
+      "<xmssScript: PUSH(64-byte xmss pubkey) OP_CHECKXMSSSIG>",
+      "<control block>"
+    ],
+    "_scriptPathNote": "Documented for completeness only. XMSS script-path is DEFERRED (stateful OTS index, cgo-bound signer). The MVP never emits this."
+  },
+  "signedTx": {
+    "label": "ILLUSTRATIVE",
+    "version": 1,
+    "locktime": 0,
+    "inputs": [
+      {
+        "previousOutpoint": { "txid": "1111111111111111111111111111111111111111111111111111111111111111", "vout": 0 },
+        "sequence": 4294967295,
+        "scriptSig": "",
+        "witness": [
+          "ILLUSTRATIVE_64_BYTE_SCHNORR_SIG_0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        ]
+      }
+    ],
+    "outputs": [
+      { "valueGrain": 200000000, "pkScript": "51207a69f47033813c66a8300a5d36045ba97c2670daa91e9f3a48c43c6e739754e6" },
+      { "valueGrain": 1000000, "pkScript": "5120feefee00000000000000000000000000000000000000000000000000000000" },
+      { "valueGrain": 298850000, "pkScript": "5120c4a96e00000000000000000000000000000000000000000000000000000000" }
+    ],
+    "rawTxHex": "ILLUSTRATIVE_PLACEHOLDER_regenerate_against_regtest_pearld",
+    "_rawTxNote": "Standard btcd SegWit serialization: version(4 LE) | 0x00 marker | 0x01 flag | varint nIn | inputs(outpoint 36 + scriptlen + sequence 4) | varint nOut | outputs(value 8 LE + scriptlen + pkScript) | witness(per input: varint nItems + items) | locktime(4 LE)."
+  },
+  "broadcast": {
+    "_constraint": "Necklace signs locally; only this rawTxHex is POSTed to the Railway broadcast API. No private key or password ever leaves the extension.",
+    "method": "sendrawtransaction-equivalent on the Railway pearld + API"
+  }
+}

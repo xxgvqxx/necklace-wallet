@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "Necklace",
+  "version": "0.1.0",
+  "description": "A non-custodial wallet for Pearl (PRL). Keys never leave your device.",
+  "minimum_chrome_version": "116",
+  "action": {
+    "default_title": "Necklace",
+    "default_popup": "index.html"
+  },
+  "background": {
+    "service_worker": "src/background/service-worker.ts",
+    "type": "module"
+  },
+  "permissions": ["storage"],
+  "host_permissions": ["https://blockbook.pearlresearch.ai/*", "https://safetrade.com/*"],
+  "content_security_policy": {
+    "extension_pages": "default-src 'self'; script-src 'self'; object-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://blockbook.pearlresearch.ai https://safetrade.com; frame-ancestors 'none'; base-uri 'self'; form-action 'none'"
+  },
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  }
+}

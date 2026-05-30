@@ -1,0 +1,2 @@
+# Transaction build/sign orchestration (uses @necklace/wallet-core). Filled in by the tx agent.
+# Flat Necklace fee = explicit visible extra P2TR output, shown before signing.
