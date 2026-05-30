@@ -13,10 +13,10 @@
  *   - Fee amount + address are COMPILE-TIME constants. Changing them requires a
  *     new, reviewable release.
  *
- * SHIP-BLOCKER: mainnet and testnet fee addresses are intentionally UNSET
- * (`null`) — fee-policy §5 forbids shipping placeholder values. Building a send
- * on a network with no pinned fee address THROWS (fail-closed). Only regtest is
- * pinned, for the dev/regtest workflow (the project's dev network decision).
+ * The mainnet fee address is PINNED (see FEE_ADDRESS_BY_NETWORK). Networks with
+ * no pinned address (`null`) fail closed — building a send there THROWS rather
+ * than emitting a placeholder (fee-policy §5). Necklace ships mainnet-only
+ * (`ACTIVE_NETWORK = mainnet`); the regtest address is a dev/test fixture only.
  */
 
 import {
